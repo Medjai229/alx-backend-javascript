@@ -1,27 +1,27 @@
 interface Student {
-	firstName: string;
-	lastName: string;
-	age: number;
-	location: string;
+  firstName: string;
+  lastName: string;
+  age: number;
+  location: string;
 }
 
 const student1: Student = {
-	firstName: 'Malik',
-	lastName: 'Hussein',
-	age: 26,
-	location: 'Beni Suef'
+  firstName: 'Malik',
+  lastName: 'Hussein',
+  age: 26,
+  location: 'Beni Suef'
 }
 
 const student2: Student = {
-	firstName: 'Mohamed',
-	lastName: 'Marzouk',
-	age: 25,
-	location: 'Beni Suef'
+  firstName: 'Mohamed',
+  lastName: 'Marzouk',
+  age: 25,
+  location: 'Beni Suef'
 }
 
 const studentsList: Array<Student> = [
-	student1,
-	student2
+  student1,
+  student2
 ]
 
 const table = document.createElement("table");
