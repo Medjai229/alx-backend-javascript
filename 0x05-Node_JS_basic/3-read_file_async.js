@@ -1,30 +1,37 @@
-const fs = require('fs').promises;
+const fs = require('fs');
 
-async function countStudents(path) {
+const countStudents = async (path) => {
+  let data;
   try {
-    const data = await fs.readFile(path, 'utf-8');
-
-    const lines = data.split('\n').filter((line) => line !== '');
-    lines.shift();
-    const students = lines.map((line) => line.split(','));
-
-    console.log(`Number of students: ${students.length}`);
-
-    const fields = {};
-    students.forEach((student) => {
-      const field = student[3];
-      if (!fields[field]) {
-        fields[field] = [];
-      }
-      fields[field].push(student[0]);
-    });
-
-    Object.keys(fields).forEach((field) => {
-      console.log(`Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`);
-    });
+    data = await fs.promises.readFile(path, 'utf8');
   } catch (error) {
     throw new Error('Cannot load the database');
   }
-}
+
+  // split using newline
+  const students = data.split('\n')
+    // turn a row into an array by splitting by ,
+    .map((row) => row.split(','))
+    // skip first row
+    .filter((row) => row.length === 4 && row[0] !== 'firstname')
+    // coverting all into objects
+    .map((row) => ({
+      firstName: row[0],
+      lastName: row[1],
+      age: row[2],
+      field: row[3].replace('\r', ''),
+    }));
+  //  a code that generates CS students
+  const CS = students.filter((student) => student.field === 'CS')
+    .map((student) => student.firstName);
+  // generating SWE students
+  const SWE = students.filter((student) => student.field === 'SWE')
+    .map((student) => student.firstName);
+  // print len convert to string
+  console.log(`Number of students: ${students.length}`);
+  console.log(`Number of students in CS: ${CS.length}. List: ${CS.join(', ')}`);
+  console.log(`Number of students in SWE: ${SWE.length}. List: ${SWE.join(', ')}`);
+  return { students, CS, SWE };
+};
 
 module.exports = countStudents;

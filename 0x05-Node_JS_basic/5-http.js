@@ -1,52 +1,29 @@
 const http = require('http');
-const fs = require('fs').promises;
 
-async function countStudents(path) {
-  try {
-    const data = await fs.readFile(path, 'utf-8');
+const getStudentData = require('./3-read_file_async');
 
-    const lines = data.split('\n').filter((line) => line !== '');
-    lines.shift();
-    const students = lines.map((line) => line.split(','));
+const PORT = 1245;
+const HOST_NAME = '127.0.0.1';
 
-    let result = `Number of students: ${students.length}\n`;
-
-    const fields = {};
-    students.forEach((student) => {
-      const field = student[3];
-      if (!fields[field]) {
-        fields[field] = [];
-      }
-      fields[field].push(student[0]);
-    });
-
-    Object.keys(fields).forEach((field) => {
-      result += `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}\n`;
-    });
-    return result.trim();
-  } catch (error) {
-    throw new Error('Cannot load the database');
-  }
-}
-
-const app = http.createServer(async (req, res) => {
+const app = http.createServer((req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
   if (req.url === '/') {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('Hello Holberton School!');
-  } else if (req.url === '/students') {
-    try {
-      const data = await countStudents(process.argv[2]);
-      res.writeHead(200, { 'Content-Type': 'text/plain' });
-      res.end(`This is the list of our students\n${data}`);
-    } catch (error) {
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('Cannot load the database');
-    }
+  }
+  if (req.url === '/students') {
+    res.write('This is the list of our students\n');
+    getStudentData(process.argv[2]).then((data) => {
+      res.write(`Number of students: ${data.students.length}\n`);
+      res.write(`Number of students in CS: ${data.CS.length}. List: ${data.CS.join(', ')}\n`);
+      res.write(`Number of students in SWE: ${data.SWE.length}. List: ${data.SWE.join(', ')}\n`);
+      res.end();
+    }).catch((error) => res.end(error.message));
   }
 });
 
-app.listen(1245, () => {
-  console.log('Server is running on port 1245');
+app.listen(PORT, HOST_NAME, () => {
+  console.log(`Server running at http://${HOST_NAME}:${PORT}`);
 });
 
 module.exports = app;
