@@ -5,12 +5,13 @@
 const { expect } = require('chai');
 const getPaymentTokenFromAPI = require('./6-payment_token');
 
-describe('getPaymentTokenFromAPI', () => {
+describe('getPaymentTokenFromAPI', (done) => {
   it('should return a successful response when success is true', () => {
     getPaymentTokenFromAPI(true)
       .then((response) => {
-        expect(response).to.deep.equal({data: 'Successful response from the API' });
+        expect(response).to.deep.equal({data: 'Successful response from the API'});
         done();
-      });
+      })
+      .catch(done);
   });
 });
