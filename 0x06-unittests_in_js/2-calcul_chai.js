@@ -6,14 +6,12 @@ function calculateNumber(type, a, b) {
       return Math.round(a) - Math.round(b);
     case 'DIVIDE':
       if (Math.round(b) === 0) {
-        return 'Error'
+        return 'Error';
       }
       return Math.round(a) / Math.round(b);
     default:
       return 0;
   }
 }
-
-console.log(calculateNumber('DIVIDE', 4.6, 2))
 
 module.exports = calculateNumber;
